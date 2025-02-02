@@ -4,8 +4,11 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 import app.config as conf
 from sklearn.feature_extraction.text import CountVectorizer
+from bs4 import BeautifulSoup
 import re
 
+
+nltk.download('punkt_tab')
 nltk.download('stopwords')
 nltk.download('punkt')
 
@@ -18,9 +21,36 @@ newsProva = ["We recently published a list of 12 Best Defensive Stocks To Buy Ri
 def fetch_news(company):
     url = f"https://newsapi.org/v2/everything?q={company}&apiKey={API_KEY}"
     response = requests.get(url)
+    arrayNewsComp = []
     if response.status_code == 200:
         articles = response.json().get("articles", [])
-        return [article["content"] for article in articles]
+        print([article["url"] for article in articles if article["source"]["name"] in {"Yahoo Entertainment", "Gizmodo.com", "ABC News"}])
+        
+        for i in [{"url":article["url"], "sito":article["source"]["name"]} for article in articles if article["source"]["name"] in {"Yahoo Entertainment", "Gizmodo.com", "ABC News"}]:
+            report_response = requests.get(i["url"])
+            
+            if report_response.status_code == 200:
+                # Analizza il contenuto HTML
+                report_response.encoding = 'utf-8-sig'
+                soup = BeautifulSoup(report_response.text, "html.parser")
+
+                if i["sito"] == "Yahoo Entertainment":
+                    recirculation_elements = soup.find("div", attrs={"class":"article"})
+                elif(i["sito"] == "Gizmodo.com"):
+                    recirculation_elements = soup.find("article")
+                elif(i["sito"] == "ABC News"):
+                    recirculation_elements = soup.find("div", attrs={"class":"FITT_Article_main__body"})
+
+                for unwanted in recirculation_elements.find_all(["script", "aside", "figure"]):
+                    unwanted.decompose()
+
+                text = recirculation_elements.get_text(separator="\n", strip=True)  # Rimuove i tag HTML
+                """ text = re.sub(r'\s+', ' ', text)  # Rimuove spazi multipli
+                text = re.sub(r'[^\w\s]', '', text)  # Rimuove simboli """
+                arrayNewsComp.append(text) 
+
+        #return [article["content"] for article in articles if article["source"]["name"] in {"Yahoo Entertainment", "Gizmodo.com", "ABC News"}]
+        return arrayNewsComp
 
     return []
 
@@ -33,10 +63,9 @@ def predict_sentiment(news_list):
     cv = CountVectorizer()
     cv.fit(newsProva)
 
-
     predictions__try = model.predict(newsProva)
-    positive_indices = [i for i, x in enumerate(predictions) if x == "positive" or x == "negative"]
-    print(predictions__try)
+    positive_indices = [x for x, x in enumerate(predictions) if x == "positive" or x == "negative"]
+    
     return predictions.tolist()
 
 def preprocess_text(text):
