@@ -5,20 +5,16 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import accuracy_score
 from sklearn.svm import SVC
+import app.config as conf
 import pickle
 
 def train_model(tipo__modello):
-    # Load dataset
-    DATASET_PATH = "/home/octavian/Documenti/mcz_uni_project-main/data/financialphrasebank.csv"
-    MODEL_PATH = "/home/octavian/Documenti/mcz_uni_project-main/models/sentiment_model.pkl"
-    df = pd.read_csv(DATASET_PATH)
+    df = pd.read_csv(conf.DATASET_PATH)
 
     # Preprocess data
     df = df.dropna(subset=['Sentiment', 'News'])
     X = df['News']
     y = df['Sentiment']
-
-    print(df.head())
 
     # Split data
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
@@ -43,10 +39,9 @@ def train_model(tipo__modello):
     print(f"Accuracy: {accuracy_score(y_test, y_pred)}")
 
     # Save model
-    with open(MODEL_PATH, 'wb') as f:
+    with open(conf.MODEL_PATH, 'wb') as f:
         pickle.dump(pipeline, f)
 
 def load_model():
-    MODEL_PATH = "/home/octavian/Documenti/mcz_uni_project-main/models/sentiment_model.pkl"
-    with open(MODEL_PATH, 'rb') as f:
+    with open(conf.MODEL_PATH, 'rb') as f:
         return pickle.load(f)

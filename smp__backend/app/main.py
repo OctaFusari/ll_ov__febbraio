@@ -4,6 +4,7 @@ from app.model import train_model, load_model
 import gradio as gr
 import re
 from app.predict_model import fetch_news, predict_sentiment
+import app.config as conf
 
 
 from fastapi.middleware.cors import CORSMiddleware
