@@ -42,6 +42,8 @@ def train_model(tipo__modello):
     with open(conf.MODEL_PATH, 'wb') as f:
         pickle.dump(pipeline, f)
 
+    return accuracy_score(y_test, y_pred)
+
 def load_model():
     with open(conf.MODEL_PATH, 'rb') as f:
         return pickle.load(f)
