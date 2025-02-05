@@ -50,20 +50,21 @@ const App = () => {
 
   return (
     <div style={{ padding: "20px", fontFamily: "Arial" }}>
-      <div>
-        <h1>SMP</h1>
-        <p>
-          Previsione dell'andamento delle aziende attraverso la sentiment
-          analysis
-        </p>
-      </div>
 
       <div className="grid__centrale">
-        <div className="container">
+        <div>
+          <div className="container container__ricerca">  
+          <div>
+            <h1>smp</h1>
+            <p>
+              Previsione dell'andamento delle aziende attraverso la sentiment
+              analysis
+            </p>
+          </div>
           <form onSubmit={chimata__smp__backend}>
-            <div>
+            <div className="container">
               <h2>
-                <label htmlFor="nomeAzienda">CIK azienda: </label>
+                <label htmlFor="nomeAzienda">Nome azienda: </label>
               </h2>
               <input
                 type="text"
@@ -74,6 +75,7 @@ const App = () => {
                 style={{ marginLeft: "10px", padding: "5px" }}
               />
             </div>
+            <div  className="container">
             <h2>Seleziona il tipo di modello</h2>
 
             <div>
@@ -99,6 +101,8 @@ const App = () => {
                 Modello basato su Random Forest
               </label>
             </div>
+
+</div>
             <button
               type="submit"
               style={{ marginTop: "10px", padding: "5px 10px" }}
@@ -107,21 +111,26 @@ const App = () => {
             </button>
           </form>
         </div>
+            
+            </div>
         {loading ? (
           <div className="spinner"></div> // Mostra lo spinner mentre carica
         ) : (
-          <div className="container">
+          <div className="container container__results">
             <h2>Nome della compagnia</h2>
             <p>{result.compagnia || "nessun risultato ancora"}</p>
             <div>
-            <ul>
-              {result.prediction.map((item, index) => (
-                <li key={index}>
-                  {item.news} - Sentiment: {item.sentiment}
-                </li>
-              ))}
-            </ul>
-            </div>  
+              <ul>
+                {result.prediction.map((item, index) => (
+                  <li className="container" key={index}>
+                    <p>{item.news}</p>
+                    <div>
+                      <a>{item.sentiment}</a>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         )}
       </div>
