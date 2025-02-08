@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 import uvicorn
-from app.model import train_model, load_model
+from app.model import train_model
 import gradio as gr
 import re
 from app.predict_model import fetch_news, predict_sentiment
@@ -20,15 +20,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"], 
 )
-
-""" # Gradio interface
-def predict_sentiment(text):
-
-    text__cleaned = re.sub(r'\s+', ' ', text)  # Rimuove spazi multipli
-    text__cleaned = re.sub(r'[^\w\s]', '', text)  # Rimuove simboli
-
-    model = load_model()
-    return model.predict([text__cleaned])[0] """
 
 class dataFE_model(BaseModel):
     name: str
