@@ -34,9 +34,8 @@ def fetch_news(company):
             if text:
                 cleaned_text = preprocess_text(text)
                 news_list.append(cleaned_text)
-        
-        print(news_list)
-        return news_list
+
+        return {"testo_pulito":news_list, "testo":text}
     else:
         raise Exception(f"Errore nel recupero dati. Status: {response.status_code}")
 
@@ -49,18 +48,19 @@ def preprocess_text(text):
 
     # Rimozione HTML
     text = BeautifulSoup(text, "html.parser").get_text()
-
-    # Rimozione caratteri speciali e numeri
-    text = re.sub(r'\W+', ' ', text)
-
+    # Conversione in minuscolo
+    text = text.lower()
+    # Rimozione della punteggiatura
+    text = re.sub(r'[^\w\s]', '', text)
+    # Rimozione di link, menzioni e numeri
+    text = re.sub(r'http\S+|www\S+|@\S+|\d+', '', text)
     # Tokenizzazione
     tokens = word_tokenize(text)
-
-    # Rimozione stopwords e lemmatizzazione
     stop_words = set(stopwords.words('english'))
+    tokens = [token for token in tokens if token not in stop_words]
     tokens = [lemmatizer.lemmatize(word.lower()) for word in tokens if word.isalpha() and word.lower() not in stop_words]
 
-    return " ".join(tokens)
+    return ' '.join(tokens)
 
 def predict_sentiment(news_list):
     """

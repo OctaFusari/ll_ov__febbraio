@@ -1,13 +1,11 @@
 from fastapi import FastAPI
 import uvicorn
 from app.model import train_model
-import gradio as gr
 import re
 from app.predict_model import fetch_news, predict_sentiment
 import app.config as conf
 import os
 from pydantic import BaseModel
-
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -27,25 +25,25 @@ class dataFE_model(BaseModel):
 
 @app.post("/")
 def funzione__avvio(dataFE: dataFE_model):
-#if __name__ == "__main__":
-
-    model = open(conf.MODEL_PATH, 'rb')
-
-    if os.path.exists(conf.MODEL_PATH) and os.path.getsize(conf.MODEL_PATH) == 0:
-        if(dataFE.model == "rf"):
-            train_model("rf")
-        else:
-            train_model("svm")
-    else:
-        print(model)
-        news = fetch_news(dataFE.name)
-        if not news:
-            return {"error": "No news found for the company"}
+    if(dataFE.model == "rf" and os.path.exists(conf.MODEL_PATH__rf) and os.path.getsize(conf.MODEL_PATH__rf) == 0):
+        train_model("rf")
+    elif(dataFE.model == "svm" and os.path.exists(conf.MODEL_PATH) and os.path.getsize(conf.MODEL_PATH) == 0):
+        train_model("svm")
         
-        # Predici la direzione delle azioni
-        prediction = predict_sentiment(news)
-        """ with open('/home/octavian/Documenti/UNI/ll_ov__febbraio/smp__backend/data/prova.txt', 'w', encoding='utf-8') as file:
-            file.write(news[3]) """
-        return {"company": dataFE.name, "prediction": prediction, "news": news}
+    news = fetch_news(dataFE.name)["testo_pulito"]
+    if not news:
+        return {"error": "No news found for the company"}
+    
+    # Predici la direzione delle azioni
+    prediction = predict_sentiment(news)
+    return {"company": dataFE.name, "prediction": prediction, "news": fetch_news(dataFE.name)["testo"]}
 
-    #uvicorn.run(app, host="0.0.0.0", port=8000)
+
+""" 
+
+la domanda è che le informazioni detenute in questi articoli sono realmente rilevanti per l'andamento del mercato?
+collezionare per giorno e per settimana le informazioni stampate dai quotidiani e poi andare a raccolgile le informazioni di andamento di borsa
+poi vedere se le news realmente hanno potere predittivo sull'abbassamento e la crescita del mercato
+
+ogni giorno raccogli 1oo news e bisogna capire se parla di quella azienda e poi capire se questo testo influenza il mercato
+ """

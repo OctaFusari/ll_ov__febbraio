@@ -4,8 +4,11 @@ from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import accuracy_score
+import contractions
 import pickle
 import app.config as conf
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
 
 import re
 import nltk
@@ -18,24 +21,27 @@ from sklearn.svm import SVC
 
 # Scaricare le risorse necessarie
 nltk.download('stopwords')
+nltk.download('punkt')
 nltk.download('wordnet')
-nltk.download('omw-1.4')
+# Inizializza il lemmatizzatore
+lemmatizer = WordNetLemmatizer()
 
 # Funzione di pre-processing
 def preprocess_text(text):
-    lemmatizer = WordNetLemmatizer()
-    stop_words = set(stopwords.words('english'))
-    
+    # Conversione in minuscolo
+    text = text.lower()
+    # Rimozione della punteggiatura
+    text = re.sub(r'[^\w\s]', '', text)
     # Rimozione di link, menzioni e numeri
     text = re.sub(r'http\S+|www\S+|@\S+|\d+', '', text)
-    
-    # Rimozione di punteggiatura e conversione in minuscolo
-    text = text.translate(str.maketrans('', '', string.punctuation)).lower()
-    
-    # Tokenizzazione e lemmatizzazione
-    words = text.split()
-    words = [lemmatizer.lemmatize(word) for word in words if word not in stop_words]
-    
+    # Espansione delle contrazioni (es. "don't" -> "do not")
+    text = contractions.fix(text)
+    # Tokenizzazione
+    tokens = word_tokenize(text)
+    stop_words = set(stopwords.words('english'))
+    tokens = [token for token in tokens if token not in stop_words]
+    tokens = [lemmatizer.lemmatize(word.lower()) for word in tokens if word.isalpha() and word.lower() not in stop_words]
+
     return text
 
 def train_model(tipo__modello):
@@ -53,13 +59,11 @@ def train_model(tipo__modello):
     if tipo__modello == "rf":
         pipeline = Pipeline([
             ('tfidf', TfidfVectorizer(min_df=5, preprocessor=preprocess_text, ngram_range=(1,2))),  # Min_df per filtrare parole rare
-            ('feature_selection', SelectKBest(chi2, k=500)),  # Selezione delle migliori feature
             ('clf', RandomForestClassifier(n_estimators=100, random_state=42))
         ])
     else:
         pipeline = Pipeline([
             ('tfidf', TfidfVectorizer(min_df=5, preprocessor=preprocess_text, ngram_range=(1,2))),  # Min_df per filtrare parole rare
-            ('feature_selection', SelectKBest(chi2, k=500)),  # Selezione delle migliori feature
             ('clf', SVC(kernel='linear', C=1.0, probability=True)) 
         ])
 
