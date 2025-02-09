@@ -52,7 +52,7 @@ def preprocess_text(text):
 
     # Rimozione HTML
     text = BeautifulSoup(text, "html.parser").get_text()
-    
+
     # Conversione in minuscolo
     text = text.lower()
 
@@ -81,7 +81,7 @@ def predict_sentiment(news_list, tipo_mod):
         # Carica il modello
         with open(conf.MODEL_PATH__rf, 'rb') as f:
             model = pickle.load(f)
-    elif(tipo_mod == "svm"):
+    elif(tipo_mod == "svc"):
         # Carica il modello
         with open(conf.MODEL_PATH, 'rb') as f:
             model = pickle.load(f)

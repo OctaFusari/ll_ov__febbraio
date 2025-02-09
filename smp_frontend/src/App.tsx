@@ -87,11 +87,11 @@ const App = () => {
               <label>
                 <input
                   type="radio"
-                  value="svm"
-                  checked={modelType == "svm"}
+                  value="svc"
+                  checked={modelType == "svc"}
                   onChange={handleModelChange}
                 />
-                Modello basato su SVM
+                Modello basato su svc
               </label>
             </div>
 
