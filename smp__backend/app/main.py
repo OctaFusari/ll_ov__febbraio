@@ -30,13 +30,13 @@ def funzione__avvio(dataFE: dataFE_model):
     elif(dataFE.model == "svm" and os.path.exists(conf.MODEL_PATH) and os.path.getsize(conf.MODEL_PATH) == 0):
         train_model("svm")
         
-    news = fetch_news(dataFE.name)["testo_pulito"]
+    news = fetch_news(dataFE.name)
     if not news:
         return {"error": "No news found for the company"}
     
     # Predici la direzione delle azioni
-    prediction = predict_sentiment(news)
-    return {"company": dataFE.name, "prediction": prediction, "news": fetch_news(dataFE.name)["testo"]}
+    prediction = predict_sentiment(news, dataFE.model)
+    return prediction
 
 
 """ 

@@ -7,6 +7,7 @@ const App = () => {
   const [modelType, setTipoModello] = useState("");
   const [result, setResult] = useState({
     prediction: [{}],
+    news: [""],
     compagnia: "",
     errore: "",
   });
@@ -30,8 +31,11 @@ const App = () => {
         .then((response) => {
           setLoading(false);
 
+          console.log(response.data)
+
           setResult({
             prediction: response.data.prediction,
+            news: response.data.news,
             compagnia: response.data.company,
             errore: "",
           });
@@ -41,6 +45,7 @@ const App = () => {
       console.error("Errore nella richiesta:", error);
       setResult({
         prediction: [{}],
+        news: [""],
         compagnia: "",
         errore: "C'è stato un errore durante il recupero dei dati",
       });
@@ -86,7 +91,7 @@ const App = () => {
                   checked={modelType == "svm"}
                   onChange={handleModelChange}
                 />
-                Modello basato su SVC
+                Modello basato su SVM
               </label>
             </div>
 
@@ -123,7 +128,7 @@ const App = () => {
               <ul>
                 {result.prediction.map((item, index) => (
                   <li className="container" key={index}>
-                    <p>{item.news}</p>
+                    <p>{result.news[index]}</p>
                     <div>
                       <a>{item.sentiment}</a>
                     </div>

@@ -26,16 +26,20 @@ def fetch_news(company):
     
     if response.status_code == 200:
         response.encoding = 'utf-8-sig'
-        news_list = []
+
+        art__conv = []
 
         # Estrarre e pulire le notizie
         for article in response.json().get("results", []):
             text = article.get("description", "")
+            title = article.get("title", "")
             if text:
-                cleaned_text = preprocess_text(text)
-                news_list.append(cleaned_text)
+                unione = text
+                if title:
+                    unione = " ".join(filter(None, [title, text]))
+                art__conv.append({"title":article.get("title", ""), "text__pulito":preprocess_text(unione), "testo__grezzo":text, "sentiment":""})
 
-        return {"testo_pulito":news_list, "testo":text}
+        return art__conv
     else:
         raise Exception(f"Errore nel recupero dati. Status: {response.status_code}")
 
@@ -62,29 +66,31 @@ def preprocess_text(text):
 
     return ' '.join(tokens)
 
-def predict_sentiment(news_list):
+def predict_sentiment(news_list, tipo_mod):
     """
     Predice il sentiment delle notizie usando un modello pre-addestrato.
     """
     processed_news = []
-    new_sentiments = []
 
-    # Carica il modello
-    with open(conf.MODEL_PATH, 'rb') as f:
-        model = pickle.load(f)
+    if(tipo_mod == "rf"):
+        print(tipo_mod)
+        # Carica il modello
+        with open(conf.MODEL_PATH__rf, 'rb') as f:
+            model = pickle.load(f)
+    elif(tipo_mod == "svm"):
+        # Carica il modello
+        with open(conf.MODEL_PATH, 'rb') as f:
+            model = pickle.load(f)
 
     # Prepara il testo per la previsione
     for news in news_list:
-        processed_news.append(news)
+        processed_news.append(news["text__pulito"])
 
     # Predizione del sentiment
     predictions = model.predict(processed_news)
 
     # Creazione dell'output strutturato
     for i, news in enumerate(news_list):
-        new_sentiments.append({
-            "news": news,
-            "sentiment": predictions.tolist()[i]
-        })
+        news["sentiment"] = predictions.tolist()[i]
 
-    return new_sentiments
+    return news_list

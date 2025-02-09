@@ -72,7 +72,7 @@ def train_model(tipo__modello):
 
     # Evaluate model
     y_pred = pipeline.predict(X_test)
-    print(f"Accuracy: {accuracy_score(y_test, y_pred)}")
+    print(f"Accuracy {tipo__modello}: {accuracy_score(y_test, y_pred)}")
 
     # Save model
     if tipo__modello == "rf":
