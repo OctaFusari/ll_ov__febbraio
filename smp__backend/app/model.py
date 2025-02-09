@@ -47,7 +47,6 @@ def preprocess_text(text):
 def train_model(tipo__modello):
     df = pd.read_csv(conf.DATASET_PATH)
 
-    # Preprocess data90
     df = df.dropna(subset=['Sentiment', 'News'])
     X = df['News']
     y = df['Sentiment']

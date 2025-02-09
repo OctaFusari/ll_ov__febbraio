@@ -52,12 +52,16 @@ def preprocess_text(text):
 
     # Rimozione HTML
     text = BeautifulSoup(text, "html.parser").get_text()
+    
     # Conversione in minuscolo
     text = text.lower()
+
     # Rimozione della punteggiatura
     text = re.sub(r'[^\w\s]', '', text)
+
     # Rimozione di link, menzioni e numeri
     text = re.sub(r'http\S+|www\S+|@\S+|\d+', '', text)
+
     # Tokenizzazione
     tokens = word_tokenize(text)
     stop_words = set(stopwords.words('english'))

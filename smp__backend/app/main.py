@@ -1,7 +1,5 @@
 from fastapi import FastAPI
-import uvicorn
 from app.model import train_model
-import re
 from app.predict_model import fetch_news, predict_sentiment
 import app.config as conf
 import os
