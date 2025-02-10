@@ -42,7 +42,7 @@ def preprocess_text(text):
     tokens = [token for token in tokens if token not in stop_words]
     tokens = [lemmatizer.lemmatize(word.lower()) for word in tokens if word.isalpha() and word.lower() not in stop_words]
 
-    return text
+    return ' '.join(tokens)
 
 def train_model(tipo__modello):
     df = pd.read_csv(conf.DATASET_PATH)

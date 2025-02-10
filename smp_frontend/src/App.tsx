@@ -5,12 +5,7 @@ import "./App.css";
 const App = () => {
   const [nomeAzienda, setNomeAzienda] = useState("");
   const [modelType, setTipoModello] = useState("");
-  const [result, setResult] = useState({
-    prediction: [{}],
-    news: [""],
-    compagnia: "",
-    errore: "",
-  });
+  const [result, setResult] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const handleModelChange = (event: any) => {
@@ -31,24 +26,11 @@ const App = () => {
         .then((response) => {
           setLoading(false);
 
-          console.log(response.data)
-
-          setResult({
-            prediction: response.data.prediction,
-            news: response.data.news,
-            compagnia: response.data.company,
-            errore: "",
-          });
+          setResult(response.data);
           console.log(response.data);
         });
     } catch (error) {
       console.error("Errore nella richiesta:", error);
-      setResult({
-        prediction: [{}],
-        news: [""],
-        compagnia: "",
-        errore: "C'è stato un errore durante il recupero dei dati",
-      });
       setLoading(false);
     }
   };
@@ -60,7 +42,7 @@ const App = () => {
         <div>
           <div className="container container__ricerca">  
           <div>
-            <h1>smp</h1>
+            <h1>News sentiment</h1>
             <p>
               Previsione dell'andamento delle aziende attraverso la sentiment
               analysis
@@ -122,15 +104,15 @@ const App = () => {
           <div className="spinner"></div> // Mostra lo spinner mentre carica
         ) : (
           <div className="container container__results">
-            <h2>Nome della compagnia</h2>
-            <p>{result.compagnia || "nessun risultato ancora"}</p>
+            <h2>Risultato {nomeAzienda}</h2>
             <div>
               <ul>
-                {result.prediction.map((item, index) => (
+                {result.map((item, index) => (
                   <li className="container" key={index}>
-                    <p>{result.news[index]}</p>
+                    <p>{item["title"]}</p>
+                    <a href={item['link']} target="_blank" rel="noopener noreferrer">Link</a>
                     <div>
-                      <a>{item.sentiment}</a>
+                      <a>{item["sentiment"]}</a>
                     </div>
                   </li>
                 ))}

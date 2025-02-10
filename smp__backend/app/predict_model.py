@@ -32,12 +32,13 @@ def fetch_news(company):
         # Estrarre e pulire le notizie
         for article in response.json().get("results", []):
             text = article.get("description", "")
-            title = article.get("title", "")
+            content = article.get("content", "")
+            link = article.get("link", "")
             if text:
-                unione = text
-                if title:
-                    unione = " ".join(filter(None, [title, text]))
-                art__conv.append({"title":article.get("title", ""), "text__pulito":preprocess_text(unione), "testo__grezzo":text, "sentiment":""})
+                unione = " ".join(filter(None, [article.get("title", ""), text]))
+                if content:
+                    unione = " ".join(filter(None, [article.get("title", ""), text,content]))
+                art__conv.append({"title":article.get("title", ""), "text__pulito":preprocess_text(unione), "testo__grezzo":text, "sentiment":"", "link":link})
 
         return art__conv
     else:
@@ -88,7 +89,7 @@ def predict_sentiment(news_list, tipo_mod):
 
     # Prepara il testo per la previsione
     for news in news_list:
-        processed_news.append(news["text__pulito"])
+        processed_news.append(news["testo__grezzo"])
 
     # Predizione del sentiment
     predictions = model.predict(processed_news)
