@@ -45,7 +45,7 @@ def preprocess_text(text):
     return ' '.join(tokens)
 
 def train_model(tipo__modello):
-    df = pd.read_csv(conf.DATASET_PATH)
+    df = pd.read_csv(conf.DATASET_PATH__try)
 
     df = df.dropna(subset=['Sentiment', 'News'])
     X = df['News']
@@ -60,6 +60,8 @@ def train_model(tipo__modello):
             ('tfidf', TfidfVectorizer(min_df=5, preprocessor=preprocess_text, ngram_range=(1,2))),  # Min_df per filtrare parole rare
             ('clf', RandomForestClassifier(n_estimators=100, random_state=42))
         ])
+
+        #gridSearch###############################
     else:
         pipeline = Pipeline([
             ('tfidf', TfidfVectorizer(min_df=5, preprocessor=preprocess_text, ngram_range=(1,2))),  # Min_df per filtrare parole rare
@@ -71,14 +73,20 @@ def train_model(tipo__modello):
 
     # Evaluate model
     y_pred = pipeline.predict(X_test)
+
+    #####################################
+    #ACCURATEZZA RF = 0.743298969072165
+    #ACCURATEZZA SVC = 0.7525773195876289
+    #####################################
+
     print(f"Accuracy {tipo__modello}: {accuracy_score(y_test, y_pred)}")
 
     # Save model
     if tipo__modello == "rf":
-        with open(conf.MODEL_PATH__rf, 'wb') as f:
+        with open(conf.MODEL_PATH__rf__try, 'wb') as f:
             pickle.dump(pipeline, f)
     else:
-        with open(conf.MODEL_PATH, 'wb') as f:
+        with open(conf.MODEL_PATH__try, 'wb') as f:
             pickle.dump(pipeline, f)
 
     return accuracy_score(y_test, y_pred)

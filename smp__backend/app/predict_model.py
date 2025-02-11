@@ -80,11 +80,11 @@ def predict_sentiment(news_list, tipo_mod):
     if(tipo_mod == "rf"):
         print(tipo_mod)
         # Carica il modello
-        with open(conf.MODEL_PATH__rf, 'rb') as f:
+        with open(conf.MODEL_PATH__rf__try, 'rb') as f:
             model = pickle.load(f)
     elif(tipo_mod == "svc"):
         # Carica il modello
-        with open(conf.MODEL_PATH, 'rb') as f:
+        with open(conf.MODEL_PATH__try, 'rb') as f:
             model = pickle.load(f)
 
     # Prepara il testo per la previsione

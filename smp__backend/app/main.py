@@ -23,9 +23,9 @@ class dataFE_model(BaseModel):
 
 @app.post("/")
 def funzione__avvio(dataFE: dataFE_model):
-    if(dataFE.model == "rf" and os.path.exists(conf.MODEL_PATH__rf) and os.path.getsize(conf.MODEL_PATH__rf) == 0):
+    if(dataFE.model == "rf" and os.path.exists(conf.MODEL_PATH__rf__try) and os.path.getsize(conf.MODEL_PATH__rf__try) == 0):
         train_model("rf")
-    elif(dataFE.model == "svc" and os.path.exists(conf.MODEL_PATH) and os.path.getsize(conf.MODEL_PATH) == 0):
+    elif(dataFE.model == "svc" and os.path.exists(conf.MODEL_PATH__try) and os.path.getsize(conf.MODEL_PATH__try) == 0):
         train_model("svc")
         
     news = fetch_news(dataFE.name)

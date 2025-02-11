@@ -92,7 +92,6 @@ const App = () => {
 </div>
             <button
               type="submit"
-              style={{ marginTop: "10px", padding: "5px 10px" }}
             >
               Fai previsione
             </button>
@@ -107,12 +106,12 @@ const App = () => {
             <h2>Risultato {nomeAzienda}</h2>
             <div>
               <ul>
-                {result.map((item, index) => (
+                {result.map((item, index) => (  
                   <li className="container" key={index}>
-                    <p>{item["title"]}</p>
-                    <a href={item['link']} target="_blank" rel="noopener noreferrer">Link</a>
+                    <h2>{item["title"]}</h2>
                     <div>
-                      <a>{item["sentiment"]}</a>
+                      <h3>{item["sentiment"]}</h3>
+                      <a href={item['link']} target="_blank" rel="noopener noreferrer">Link articolo</a>
                     </div>
                   </li>
                 ))}
